@@ -39,7 +39,7 @@ impl NQueens for ColumnVec
 
     fn create_empty(n: usize) -> ColumnVec
     {
-        ColumnVec::init_empty(n)
+        ColumnVec::init_empty(n, None)
     }
 
     fn name(&self) -> &str { "board_vector" }

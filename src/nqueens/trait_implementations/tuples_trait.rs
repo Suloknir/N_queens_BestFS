@@ -33,7 +33,7 @@ impl NQueens for Tuples
 
     fn create_empty(n: usize) -> Tuples
     {
-        Tuples::init_empty(n)
+        Tuples::init_empty(n, None)
     }
 
     fn name(&self) -> &str { "board_tuple" }
@@ -42,7 +42,7 @@ impl NQueens for Tuples
     {
         let n = n.expect("Parameter 'n' must be provided!");
         let mut children = Vec::new();
-        let mut child = Tuples::init_empty(n);
+        let mut child = Tuples::init_empty(n, None);
         child.data = self.data.clone();
         child.data.push((-1, -1));
         for i in 0..n

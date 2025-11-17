@@ -84,5 +84,18 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone
         }
         None
     }
-
+    /// Finds solution of n-queens problem for given size `n`. Uses heuristic
+    /// function defined in the struct that implements this the trait
+    ///
+    /// Returns `Some((T, o, c))` where:
+    /// - `T` is the found BFS solution of type `T`,
+    /// - `o` is the number of elements remaining in the open set
+    ///   at the moment the search stopped,
+    /// - `c` is the number of elements in the closed set at the
+    ///    moment the search stopped,
+    /// - `None` - if no solution was found.
+    fn best_fs(_n: usize) -> Option<(Self, usize, usize)>
+    {
+        todo!()
+    }
 }
