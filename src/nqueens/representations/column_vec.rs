@@ -1,4 +1,5 @@
 use crate::nqueens::enum_def::HeuristicType;
+use std::collections::HashSet;
 #[derive(Clone, Debug)]
 pub struct ColumnVec
 {
@@ -33,8 +34,47 @@ impl ColumnVec
     {
         self.heuristic_val
     }
-    pub fn calc_heuristic(&self)
+
+    pub fn calc_heuristic(&mut self)
     {
-        todo!()
+        match self.heuristic_type
+        {
+            HeuristicType::AttacksCount =>
+            {
+                self.heuristic_val = self.attacks_count();
+            }
+            HeuristicType::AttacksCountAndQueensCount =>
+            {
+                self.heuristic_val = self.attacks_count() + (self.n - self.queens_count);
+            }
+            HeuristicType::None =>
+            {
+                self.heuristic_val = 0;
+            }
+        }
+    }
+
+    fn attacks_count(&self) -> usize
+    {
+        let mut result = 0;
+        let mut seen = HashSet::new();
+        for x in self.data.iter().filter(|&&x| x >= 0)
+        {
+            if !seen.insert(x)
+            {
+                result += 1;
+            }
+        }
+        for (c1, r1) in self.data.iter().enumerate().filter(|&(_, &x)| x >= 0)
+        {
+            for (c2, r2) in self.data.iter().enumerate().skip(c1 + 1).filter(|&(_, &x)| x >= 0)
+            {
+                if (r1 - r2).abs() == (c1 as i32 - c2 as i32).abs()
+                {
+                    result += 1;
+                }
+            }
+        }
+        result
     }
 }

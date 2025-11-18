@@ -11,9 +11,9 @@ fn main()
     let mut duration = start.elapsed();
     println!("Tuples finished in {:?}", duration);
 
-    start = Instant::now();
-    println!("{:?}", ColumnVec::dfs(n));
-    // println!("{:?}", ColumnVec::bfs(n));
-    duration = start.elapsed();
-    println!("ColumnVec finished in {:?}", duration);
+    // start = Instant::now();
+    // println!("{:?}", ColumnVec::dfs(n));
+    // // println!("{:?}", ColumnVec::bfs(n));
+    // duration = start.elapsed();
+    // println!("ColumnVec finished in {:?}", duration);
 }
