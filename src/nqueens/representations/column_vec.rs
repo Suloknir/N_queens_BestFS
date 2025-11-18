@@ -1,5 +1,5 @@
 use crate::nqueens::enum_def::HeuristicType;
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct ColumnVec
 {
     pub data: Vec<i32>,

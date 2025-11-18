@@ -4,3 +4,4 @@ pub mod representations;
 mod enum_def;
 
 pub use trait_def::NQueens;
+pub use enum_def::HeuristicType;

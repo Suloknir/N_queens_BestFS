@@ -1,6 +1,6 @@
 use std::collections::{HashSet, VecDeque};
 #[allow(dead_code)]
-pub trait NQueens : Sized + Eq + std::hash::Hash + Clone
+pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Debug
 {
     fn conflicts(&self) -> bool;
     fn generate_board(&mut self, n: usize);
@@ -8,7 +8,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone
     fn name(&self) -> &str;
     fn generate_children(&self, n: Option<usize>) -> Vec<Self>;
     fn get_queens_count(&self) -> usize;
-    /// Finds DFS solution of n-queens problem for given size `n`
+    /// Finds DFS solution of n-queens problem for given size `n`.
     ///
     /// Returns `Some((T, o, c))` where:
     /// - `T` is the found DFS solution of type `T`,
@@ -29,11 +29,12 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone
         {
             open_set.remove(&current);
             let queens_count = current.get_queens_count();
-            if queens_count == n
+            if queens_count == n && !current.conflicts()
             {
                 return Some((current, open.len(), closed.len()));
             }
             let children = current.generate_children(Some(n));
+            // assert!(children.len() <= n);
             for child in children
             {
                 if !closed.contains(&child) && !open_set.contains(&child)
@@ -46,7 +47,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone
         }
         None
     }
-    /// Finds BFS solution of n-queens problem for given size `n`
+    /// Finds BFS solution of n-queens problem for given size `n`.
     ///
     /// Returns `Some((T, o, c))` where:
     /// - `T` is the found BFS solution of type `T`,
@@ -67,7 +68,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone
         {
             open_set.remove(&current);
             let queens_count = current.get_queens_count();
-            if queens_count == n
+            if queens_count == n && !current.conflicts()
             {
                 return Some((current, open.len(), closed.len()));
             }
@@ -85,7 +86,8 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone
         None
     }
     /// Finds solution of n-queens problem for given size `n`. Uses heuristic
-    /// function defined in the struct that implements this the trait
+    /// function defined in the struct that implements this the trait to determine
+    /// which nodes should be expanded first.
     ///
     /// Returns `Some((T, o, c))` where:
     /// - `T` is the found BFS solution of type `T`,

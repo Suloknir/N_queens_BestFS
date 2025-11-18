@@ -1,6 +1,8 @@
 use crate::nqueens::trait_def::NQueens;
 use crate::nqueens::representations::ColumnVec;
 use std::collections::HashSet;
+use std::hash::{Hash, Hasher};
+use std::cmp::Ordering;
 use rand::Rng;
 
 impl NQueens for ColumnVec
@@ -27,7 +29,6 @@ impl NQueens for ColumnVec
         }
         false
     }
-
     fn generate_board(&mut self, n: usize)
     {
         let mut rng = rand::rng();
@@ -47,19 +48,20 @@ impl NQueens for ColumnVec
     fn generate_children(&self, n: Option<usize>) -> Vec<ColumnVec>
     {
         let n = n.unwrap_or(self.data.len());
-        let mut children = Vec::new();
-        for (id, _) in self.data.iter().enumerate().filter(|&(_, &x)| x < 0)
+        if self.queens_count >= n
         {
-            let mut child = self.clone();
-            for i in 0..n
-            {
-                child.data[id] = i as i32;
-                child.queens_count = self.queens_count + 1;
-                if !child.conflicts()
-                {
-                    children.push(child.clone());
-                }
-            }
+            return Vec::new();
+        }
+        let mut children = Vec::new();
+        // let mut child = self.clone();
+        for col in 0..n
+        {
+            let mut child = ColumnVec::init_empty(n, None);
+            child.data = self.data.clone();
+            child.data[self.queens_count] = col as i32;
+            child.queens_count = self.queens_count + 1;
+            // if !child.conflicts() {children.push(child.clone());}
+            children.push(child);
         }
         children
     }
@@ -67,5 +69,40 @@ impl NQueens for ColumnVec
     fn get_queens_count(&self) -> usize
     {
         self.queens_count
+    }
+}
+
+impl PartialEq for ColumnVec
+{
+    fn eq(&self, other: &Self) -> bool
+    {
+        self.data == other.data
+    }
+}
+
+impl Eq for ColumnVec{}
+
+impl Hash for ColumnVec
+{
+    fn hash<H: Hasher>(&self, state: &mut H)
+    {
+        self.data.hash(state);
+    }
+}
+
+impl PartialOrd for ColumnVec
+{
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering>
+    {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for ColumnVec
+{
+    //Reversed ordering, heuristic_val = 0 > heuristic_val = 2
+    fn cmp(&self, other: &Self) -> Ordering
+    {
+        other.get_heuristic_val().cmp(&self.get_heuristic_val())
     }
 }

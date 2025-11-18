@@ -1,5 +1,7 @@
 use crate::nqueens::trait_def::NQueens;
 use crate::nqueens::representations::Tuples;
+use std::hash::{Hash, Hasher};
+use std::cmp::Ordering;
 use rand::Rng;
 
 impl NQueens for Tuples
@@ -41,20 +43,19 @@ impl NQueens for Tuples
     fn generate_children(&self, n: Option<usize>) -> Vec<Tuples>
     {
         let n = n.expect("Parameter 'n' must be provided!");
-        let mut children = Vec::new();
-        let mut child = Tuples::init_empty(n, None);
-        child.data = self.data.clone();
-        child.data.push((-1, -1));
-        for i in 0..n
+        if self.data.len() >= n
         {
-            for j in 0..n
-            {
-                *child.data.last_mut().unwrap() = (i as i32, j as i32);
-                if !child.conflicts()
-                {
-                    children.push(child.clone());
-                }
-            }
+            return Vec::new();
+        }
+        let mut children = Vec::new();
+        let next_row = self.data.len();
+        for col in 0..n
+        {
+            let mut child = Tuples::init_empty(n, None);
+            child.data = self.data.clone();
+            child.data.push((next_row as i32, col as i32));
+            // if !child.conflicts(){children.push(child.clone());}
+            children.push(child);
         }
         children
     }
@@ -62,5 +63,40 @@ impl NQueens for Tuples
     fn get_queens_count(&self) -> usize
     {
         self.data.len()
+    }
+}
+
+impl PartialEq for Tuples
+{
+    fn eq(&self, other: &Self) -> bool
+    {
+        self.data == other.data
+    }
+}
+
+impl Eq for Tuples {}
+
+impl Hash for Tuples
+{
+    fn hash<H: Hasher>(&self, state: &mut H)
+    {
+        self.data.hash(state);
+    }
+}
+
+impl PartialOrd for Tuples
+{
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering>
+    {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Tuples
+{
+    //Reversed ordering, heuristic_val = 0 > heuristic_val = 2
+    fn cmp(&self, other: &Self) -> Ordering
+    {
+        other.get_heuristic_val().cmp(&self.get_heuristic_val())
     }
 }
