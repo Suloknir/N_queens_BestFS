@@ -4,16 +4,18 @@ use nqueens::{NQueens, representations::{Tuples, ColumnVec}};
 
 fn main()
 {
-    let n = 8;
+    let n = 35;
     let mut start = Instant::now();
-    println!("{:?}", Tuples::dfs(n));
-    // println!("{:?}", Tuples::bfs(n));
-    let mut duration = start.elapsed();
-    println!("Tuples finished in {:?}", duration);
-
-    // start = Instant::now();
-    // println!("{:?}", ColumnVec::dfs(n));
+    // // println!("{:?}", ColumnVec::dfs(n));
     // // println!("{:?}", ColumnVec::bfs(n));
-    // duration = start.elapsed();
-    // println!("ColumnVec finished in {:?}", duration);
+    println!("{:?}", ColumnVec::best_fs(n, nqueens::HeuristicType::AttacksCount));
+    let mut duration = start.elapsed();
+    println!("ColumnVec finished in {:?}", duration);
+
+    start = Instant::now();
+    // println!("{:?}", Tuples::dfs(n));
+    // println!("{:?}", Tuples::bfs(n));
+    println!("{:?}", Tuples::best_fs(n, nqueens::HeuristicType::AttacksCount));
+    duration = start.elapsed();
+    println!("Tuples finished in {:?}", duration);
 }

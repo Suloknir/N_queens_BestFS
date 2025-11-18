@@ -1,12 +1,15 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::{HashSet, VecDeque, BinaryHeap};
+use crate::nqueens::enum_def::HeuristicType;
 #[allow(dead_code)]
 pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Debug
 {
     fn conflicts(&self) -> bool;
     fn generate_board(&mut self, n: usize);
-    fn create_empty(n: usize) -> Self;
+    fn create_empty(n: usize, heuristic_type: Option<HeuristicType>) -> Self;
     fn name(&self) -> &str;
     fn generate_children(&self, n: Option<usize>) -> Vec<Self>;
+    fn calc_heuristic(&mut self);
+    fn get_heuristic_val(&self) -> usize;
     fn get_queens_count(&self) -> usize;
     /// Finds DFS solution of n-queens problem for given size `n`.
     ///
@@ -23,7 +26,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Deb
         let mut open = Vec::<Self>::new();
         // Speeds up DFS ~ 5-10% faster
         let mut open_set = HashSet::<Self>::new();
-        open.push(Self::create_empty(n));
+        open.push(Self::create_empty(n, None));
         open_set.insert(open[0].clone());
         while let Some(current) = open.pop()
         {
@@ -62,7 +65,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Deb
         let mut open = VecDeque::<Self>::new();
         // Speeds up BFS ~ 10 times faster
         let mut open_set = HashSet::<Self>::new();
-        open.push_back(Self::create_empty(n));
+        open.push_back(Self::create_empty(n, None));
         open_set.insert(open[0].clone());
         while let Some(current) = open.pop_front()
         {
@@ -96,8 +99,49 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Deb
     /// - `c` is the number of elements in the closed set at the
     ///    moment the search stopped,
     /// - `None` - if no solution was found.
-    fn best_fs(_n: usize) -> Option<(Self, usize, usize)>
+    fn best_fs(n: usize, heuristic_type: HeuristicType) -> Option<(Self, usize, usize)>
     {
-        todo!()
+        let mut closed = HashSet::<Self>::new();
+        let mut open = BinaryHeap::<Self>::new();
+        let mut open_set = HashSet::<Self>::new();
+        let mut state0 = Self::create_empty(n, Some(heuristic_type));
+        state0.calc_heuristic();
+        // println!("{state0:?}");
+        open_set.insert(state0.clone());
+        open.push(state0);
+        while let Some(current) = open.pop()
+        {
+            open_set.remove(&current);
+            let queens_count = current.get_queens_count();
+            if queens_count == n && !current.conflicts()
+            {
+                return Some((current, open.len(), closed.len()));
+            }
+            let children = current.generate_children(Some(n));
+            for mut child in children
+            {
+                if closed.contains(&child)
+                {
+                    continue;
+                }
+                child.calc_heuristic();
+                if !open_set.contains(&child)
+                {
+                    open.push(child.clone());
+                    open_set.insert(child);
+                }
+                else
+                {
+                    if child.get_heuristic_val() < open_set.get(&child)?.get_heuristic_val()
+                    {
+                        open_set.replace(child.clone());
+                        //Todo: figure out how to delete duplicate from binaryheap to save memory
+                        open.push(child);
+                    }
+                }
+            }
+            closed.insert(current);
+        }
+        None
     }
 }

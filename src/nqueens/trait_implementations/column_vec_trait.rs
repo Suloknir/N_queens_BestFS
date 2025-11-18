@@ -1,5 +1,6 @@
 use crate::nqueens::trait_def::NQueens;
 use crate::nqueens::representations::ColumnVec;
+use crate::nqueens::enum_def::HeuristicType;
 use std::collections::HashSet;
 use std::hash::{Hash, Hasher};
 use std::cmp::Ordering;
@@ -38,9 +39,9 @@ impl NQueens for ColumnVec
         self.data = board;
     }
 
-    fn create_empty(n: usize) -> ColumnVec
+    fn create_empty(n: usize, heuristic_type: Option<HeuristicType>) -> Self
     {
-        ColumnVec::init_empty(n, None)
+        ColumnVec::init_empty(n, heuristic_type)
     }
 
     fn name(&self) -> &str { "board_vector" }
@@ -53,17 +54,25 @@ impl NQueens for ColumnVec
             return Vec::new();
         }
         let mut children = Vec::new();
-        // let mut child = self.clone();
+        let mut child = self.clone();
         for col in 0..n
         {
-            let mut child = ColumnVec::init_empty(n, None);
-            child.data = self.data.clone();
             child.data[self.queens_count] = col as i32;
             child.queens_count = self.queens_count + 1;
             // if !child.conflicts() {children.push(child.clone());}
-            children.push(child);
+            children.push(child.clone());
         }
         children
+    }
+
+    fn calc_heuristic(&mut self)
+    {
+        self.calc_heuristic();
+    }
+
+    fn get_heuristic_val(&self) -> usize
+    {
+        self.get_heuristic_val()
     }
 
     fn get_queens_count(&self) -> usize

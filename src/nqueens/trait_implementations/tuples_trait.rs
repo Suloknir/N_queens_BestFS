@@ -1,5 +1,6 @@
 use crate::nqueens::trait_def::NQueens;
 use crate::nqueens::representations::Tuples;
+use crate::nqueens::enum_def::HeuristicType;
 use std::hash::{Hash, Hasher};
 use std::cmp::Ordering;
 use rand::Rng;
@@ -33,9 +34,9 @@ impl NQueens for Tuples
         self.data = board;
     }
 
-    fn create_empty(n: usize) -> Tuples
+    fn create_empty(n: usize, heuristic_type: Option<HeuristicType>) -> Self
     {
-        Tuples::init_empty(n, None)
+        Tuples::init_empty(n, heuristic_type)
     }
 
     fn name(&self) -> &str { "board_tuple" }
@@ -51,13 +52,22 @@ impl NQueens for Tuples
         let next_row = self.data.len();
         for col in 0..n
         {
-            let mut child = Tuples::init_empty(n, None);
-            child.data = self.data.clone();
+            let mut child = self.clone();
             child.data.push((next_row as i32, col as i32));
             // if !child.conflicts(){children.push(child.clone());}
             children.push(child);
         }
         children
+    }
+
+    fn calc_heuristic(&mut self)
+    {
+        self.calc_heuristic();
+    }
+
+    fn get_heuristic_val(&self) -> usize
+    {
+        self.get_heuristic_val()
     }
 
     fn get_queens_count(&self) -> usize
