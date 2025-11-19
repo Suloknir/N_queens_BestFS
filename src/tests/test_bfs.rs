@@ -14,10 +14,11 @@ pub fn test_bfs(nmax: usize, file: &mut File)
         let (solution, open_count, closed_count) = result.unwrap();
         let duration = start.elapsed();
         println!("\tColumnVec - Finished in {duration:?}");
-        writeln!(file, "{};{};{};{};{:?};{};{};{}",
+        writeln!(file, "{};{};{};{};{};{:?};{};{};{}",
                  n,
                  "ColumnVec",
                  "BFS",
+                 "None",
                  "None",
                  solution.data,
                  open_count,
@@ -30,10 +31,11 @@ pub fn test_bfs(nmax: usize, file: &mut File)
         let (solution, open_count, closed_count) = result.unwrap();
         let duration = start.elapsed();
         println!("\tTuples - Finished in {duration:?}");
-        writeln!(file, "{};{};{};{};{:?};{};{};{}",
+        writeln!(file, "{};{};{};{};{};{:?};{};{};{}",
                  n,
                  "Tuples",
                  "BFS",
+                 "None",
                  "None",
                  solution.data,
                  open_count,
@@ -42,4 +44,5 @@ pub fn test_bfs(nmax: usize, file: &mut File)
         ).unwrap();
         file.flush().unwrap();
     }
+    println!();
 }

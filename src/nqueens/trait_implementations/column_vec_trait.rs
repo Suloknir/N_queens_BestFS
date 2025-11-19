@@ -4,6 +4,7 @@ use crate::nqueens::enum_def::Heuristic;
 use std::hash::{Hash, Hasher};
 use std::cmp::Ordering;
 use rand::Rng;
+// use rand::seq::SliceRandom;
 
 impl NQueens for ColumnVec
 {
@@ -59,6 +60,8 @@ impl NQueens for ColumnVec
             // if !child.conflicts() {children.push(child.clone());}
             children.push(child);
         }
+        // let mut rng = rand::rng();
+        // children.shuffle(&mut rng);
         children
     }
 
