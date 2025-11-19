@@ -1,10 +1,8 @@
 use crate::nqueens::enum_def::HeuristicType;
-use std::collections::HashSet;
 #[derive(Clone, Debug)]
 pub struct ColumnVec
 {
     pub data: Vec<i32>,
-    pub queens_count: usize,
     pub heuristic_type: HeuristicType,
     /// Value of the heuristic function used by Best first search
     heuristic_val: usize,
@@ -19,8 +17,7 @@ impl ColumnVec
     {
         ColumnVec
         {
-            data: vec![-1; n],
-            queens_count: 0,
+            data: Vec::new(),
             heuristic_type: heuristic_type.unwrap_or(HeuristicType::None),
             heuristic_val: 0,
             n,
@@ -45,7 +42,8 @@ impl ColumnVec
             }
             HeuristicType::AttacksCountAndQueensCount =>
             {
-                self.heuristic_val = self.attacks_count() + (self.n - self.queens_count);
+                let queens_count = self.data.len();
+                self.heuristic_val = self.attacks_count() + (self.n - queens_count);
             }
             HeuristicType::None =>
             {
@@ -57,18 +55,14 @@ impl ColumnVec
     fn attacks_count(&self) -> usize
     {
         let mut result = 0;
-        let mut seen = HashSet::new();
-        for x in self.data.iter().filter(|&&x| x >= 0)
+        for (c1, r1) in self.data.iter().enumerate() //.filter(|&(_, &x)| x >= 0)
         {
-            if !seen.insert(x)
+            for (c2, r2) in self.data.iter().enumerate().skip(c1 + 1) //.filter(|&(_, &x)| x >= 0)
             {
-                result += 1;
-            }
-        }
-        for (c1, r1) in self.data.iter().enumerate().filter(|&(_, &x)| x >= 0)
-        {
-            for (c2, r2) in self.data.iter().enumerate().skip(c1 + 1).filter(|&(_, &x)| x >= 0)
-            {
+                if r1 == r2
+                {
+                    result += 1;
+                }
                 if (r1 - r2).abs() == (c1 as i32 - c2 as i32).abs()
                 {
                     result += 1;

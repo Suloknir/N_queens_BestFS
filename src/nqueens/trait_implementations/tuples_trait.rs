@@ -41,10 +41,10 @@ impl NQueens for Tuples
 
     fn name(&self) -> &str { "board_tuple" }
 
-    fn generate_children(&self, n: Option<usize>) -> Vec<Tuples>
+    fn generate_children(&self, n: usize) -> Vec<Tuples>
     {
-        let n = n.expect("Parameter 'n' must be provided!");
-        if self.data.len() >= n
+        let queens_count = self.data.len();
+        if queens_count >= n
         {
             return Vec::new();
         }
@@ -104,7 +104,7 @@ impl PartialOrd for Tuples
 
 impl Ord for Tuples
 {
-    //Reversed ordering, heuristic_val = 0 > heuristic_val = 2
+    //Reversed ordering, eg. (heuristic_val = 0) > (heuristic_val = 2)
     fn cmp(&self, other: &Self) -> Ordering
     {
         other.get_heuristic_val().cmp(&self.get_heuristic_val())

@@ -1,7 +1,6 @@
 use crate::nqueens::trait_def::NQueens;
 use crate::nqueens::representations::ColumnVec;
 use crate::nqueens::enum_def::HeuristicType;
-use std::collections::HashSet;
 use std::hash::{Hash, Hasher};
 use std::cmp::Ordering;
 use rand::Rng;
@@ -10,18 +9,14 @@ impl NQueens for ColumnVec
 {
     fn conflicts(&self) -> bool
     {
-        let mut seen = HashSet::new();
-        for x in self.data.iter().filter(|&&x| x >= 0)
+        for (c1, r1) in self.data.iter().enumerate() //.filter(|&(_, &x)| x >= 0)
         {
-            if !seen.insert(x)
+            for (c2, r2) in self.data.iter().enumerate().skip(c1 + 1) //.filter(|&(_, &x)| x >= 0)
             {
-                return true;
-            }
-        }
-        for (c1, r1) in self.data.iter().enumerate().filter(|&(_, &x)| x >= 0)
-        {
-            for (c2, r2) in self.data.iter().enumerate().skip(c1 + 1).filter(|&(_, &x)| x >= 0)
-            {
+                if r1 == r2
+                {
+                    return true;
+                }
                 if (r1 - r2).abs() == (c1 as i32 - c2 as i32).abs()
                 {
                     return true;
@@ -46,19 +41,18 @@ impl NQueens for ColumnVec
 
     fn name(&self) -> &str { "board_vector" }
 
-    fn generate_children(&self, n: Option<usize>) -> Vec<ColumnVec>
+    fn generate_children(&self, n: usize) -> Vec<ColumnVec>
     {
-        let n = n.unwrap_or(self.data.len());
-        if self.queens_count >= n
+        let queens_count = self.data.len();
+        if queens_count >= n
         {
             return Vec::new();
         }
         let mut children = Vec::new();
-        let mut child = self.clone();
         for col in 0..n
         {
-            child.data[self.queens_count] = col as i32;
-            child.queens_count = self.queens_count + 1;
+            let mut child = self.clone();
+            child.data.push(col as i32);
             // if !child.conflicts() {children.push(child.clone());}
             children.push(child.clone());
         }
@@ -77,7 +71,7 @@ impl NQueens for ColumnVec
 
     fn get_queens_count(&self) -> usize
     {
-        self.queens_count
+        self.data.len()
     }
 }
 

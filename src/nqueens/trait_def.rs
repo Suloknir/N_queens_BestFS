@@ -7,7 +7,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Deb
     fn generate_board(&mut self, n: usize);
     fn create_empty(n: usize, heuristic_type: Option<HeuristicType>) -> Self;
     fn name(&self) -> &str;
-    fn generate_children(&self, n: Option<usize>) -> Vec<Self>;
+    fn generate_children(&self, n: usize) -> Vec<Self>;
     fn calc_heuristic(&mut self);
     fn get_heuristic_val(&self) -> usize;
     fn get_queens_count(&self) -> usize;
@@ -36,7 +36,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Deb
             {
                 return Some((current, open.len(), closed.len()));
             }
-            let children = current.generate_children(Some(n));
+            let children = current.generate_children(n);
             // assert!(children.len() <= n);
             for child in children
             {
@@ -75,7 +75,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Deb
             {
                 return Some((current, open.len(), closed.len()));
             }
-            let children = current.generate_children(Some(n));
+            let children = current.generate_children(n);
             for child in children
             {
                 if !closed.contains(&child) && !open_set.contains(&child)
@@ -117,7 +117,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord //+ std::fmt::Deb
             {
                 return Some((current, open.len(), closed.len()));
             }
-            let children = current.generate_children(Some(n));
+            let children = current.generate_children(n);
             for mut child in children
             {
                 if closed.contains(&child)
