@@ -5,4 +5,4 @@ pub mod experiment;
 
 pub use test_dfs::test_dfs;
 pub use test_bfs::test_bfs;
-// pub use test_bestfs::test_bestfs;
+pub use test_bestfs::test_bestfs;

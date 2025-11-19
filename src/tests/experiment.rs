@@ -12,5 +12,6 @@ pub fn test(nmax_dfs: usize, nmax_bfs: usize, nmax_bestfs: &[usize])
     writeln!(file, "N;representation;algorithm;heuristic;solution;open_count;closed_count;execution_time(s)").unwrap();
     test_dfs(nmax_dfs, &mut file);
     test_bfs(nmax_bfs, &mut file);
+    test_bestfs(nmax_bestfs, &mut file);
     file.flush().unwrap();
 }

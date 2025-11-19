@@ -16,7 +16,7 @@ pub fn test_bfs(nmax: usize, file: &mut File)
         println!("\tColumnVec - Finished in {duration:?}");
         writeln!(file, "{};{};{};{};{:?};{};{};{}",
                  n,
-                 "tuples",
+                 "ColumnVec",
                  "BFS",
                  "None",
                  solution.data,
@@ -32,7 +32,7 @@ pub fn test_bfs(nmax: usize, file: &mut File)
         println!("\tTuples - Finished in {duration:?}");
         writeln!(file, "{};{};{};{};{:?};{};{};{}",
                  n,
-                 "tuples",
+                 "Tuples",
                  "BFS",
                  "None",
                  solution.data,

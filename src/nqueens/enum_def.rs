@@ -7,3 +7,15 @@ pub enum Heuristic
     Manhattan,
     None,
 }
+
+impl Heuristic
+{
+    pub fn all_variants() -> &'static[Heuristic]
+    {
+        &[
+            Heuristic::AttacksCount,
+            Heuristic::AttacksCountAndQueensCount,
+            Heuristic::Manhattan,
+        ]
+    }
+}
