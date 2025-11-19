@@ -1,4 +1,6 @@
 mod nqueens;
+mod tests;
+
 use std::time::Instant;
 use nqueens::{NQueens, representations::{Tuples, ColumnVec}};
 
