@@ -1,24 +1,18 @@
 mod nqueens;
 mod tests;
-
 use std::time::Instant;
-use nqueens::{NQueens, representations::{Tuples, ColumnVec}};
 
 fn main()
 {
-    let heuristic = nqueens::Heuristic::Manhattan;
-    let n = 9;
-    let debug = false;
-    let mut start = Instant::now();
-    // println!("{:?}", ColumnVec::dfs(n));
-    // println!("{:?}", ColumnVec::bfs(n));
-    println!("{:?}", ColumnVec::best_fs(n, heuristic, debug));
-    let mut duration = start.elapsed();
-    println!("ColumnVec finished in {:?}", duration);
-    start = Instant::now();
-    // println!("{:?}", Tuples::dfs(n));
-    // println!("{:?}", Tuples::bfs(n));
-    println!("{:?}", Tuples::best_fs(n, heuristic, debug));
-    duration = start.elapsed();
-    println!("Tuples finished in {:?}", duration);
+    let start = Instant::now();
+    let nmax_dfs = 6;
+    let nmax_bfs = 4;
+    let nmax_h1: usize = 10; //nmax for attacks count
+    let nmax_h2: usize = 5; //nmax for attacks count and queens count
+    let nmax_h3: usize = 6; //nmax for manhattan
+    let nmax_bestfs = Vec::from(&[nmax_h1, nmax_h2, nmax_h3]);
+    tests::experiment::test(nmax_dfs, nmax_bfs, &nmax_bestfs);
+    let duration = start.elapsed();
+    println!();
+    println!("Finished in {:?}", duration);
 }

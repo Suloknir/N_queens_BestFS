@@ -42,7 +42,7 @@ impl NQueens for ColumnVec
         ColumnVec::init_empty(n, heuristic_type)
     }
 
-    fn name(&self) -> &str { "board_vector" }
+    fn name(&self) -> &str { "column_vec" }
 
     fn generate_children(&self, n: usize) -> Vec<ColumnVec>
     {

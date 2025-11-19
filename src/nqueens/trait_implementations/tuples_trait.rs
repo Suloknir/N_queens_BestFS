@@ -39,7 +39,7 @@ impl NQueens for Tuples
         Tuples::init_empty(n, heuristic_type)
     }
 
-    fn name(&self) -> &str { "board_tuple" }
+    fn name(&self) -> &str { "tuples" }
 
     fn generate_children(&self, n: usize) -> Vec<Tuples>
     {
