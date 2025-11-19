@@ -1,9 +1,9 @@
-use crate::nqueens::enum_def::HeuristicType;
+use crate::nqueens::enum_def::Heuristic;
 #[derive(Clone, Debug)]
 pub struct Tuples
 {
     pub data: Vec<(i32, i32)>,
-    pub heuristic_type: HeuristicType,
+    pub heuristic_type: Heuristic,
     /// Value of the heuristic function used by Best first search
     heuristic_val: usize,
     /// Size of the chessboard
@@ -13,13 +13,13 @@ pub struct Tuples
 #[allow(dead_code)]
 impl Tuples
 {
-    pub fn init_empty(n: usize, heuristic_type: Option<HeuristicType>) -> Self
+    pub fn init_empty(n: usize, heuristic_type: Option<Heuristic>) -> Self
     {
         Tuples
         {
             data: Vec::new(),
-            heuristic_type: heuristic_type.unwrap_or(HeuristicType::None),
-            heuristic_val: 0,
+            heuristic_type: heuristic_type.unwrap_or(Heuristic::None),
+            heuristic_val: n,
             n,
         }
     }
@@ -38,20 +38,52 @@ impl Tuples
     {
         match self.heuristic_type
         {
-            HeuristicType::AttacksCount =>
+            Heuristic::AttacksCount =>
             {
                 self.heuristic_val = self.attacks_count();
             }
-            HeuristicType::AttacksCountAndQueensCount =>
+            Heuristic::AttacksCountAndQueensCount =>
             {
                 let queens_count = self.data.len();
                 self.heuristic_val = self.attacks_count() + (self.n - queens_count);
             }
-            HeuristicType::None =>
+            Heuristic::Manhattan =>
             {
-                self.heuristic_val = 0;
+                self.heuristic_val =
+                {
+                    let mut result = 0;
+                    for (i, &(r1, c1)) in self.data.iter().enumerate() //.filter(|&(_, (r, c))| *r >= 0 && *c>=0)
+                    {
+                        for &(r2, c2) in self.data.iter().skip(i + 1)
+                        {
+                            result +=
+                            {
+                                let distance = Self::manhattan_distance((r1, c1), (r2, c2));
+                                if distance <= 3
+                                {
+                                    distance * self.n
+                                }
+                                else
+                                {
+                                    distance
+                                }
+                            }
+                        }
+                    }
+                    result
+                }
+            }
+            Heuristic::None =>
+            {
+                self.heuristic_val = self.n;
             }
         }
+    }
+    fn manhattan_distance(q1: (i32, i32), q2: (i32, i32)) -> usize
+    {
+        let (r1, c1) = q1;
+        let (r2, c2) = q2;
+        (r1 - r2).abs() as usize - (c1 - c2).abs() as usize
     }
 
     fn attacks_count(&self) -> usize

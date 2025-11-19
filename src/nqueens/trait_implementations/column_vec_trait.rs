@@ -1,6 +1,6 @@
 use crate::nqueens::trait_def::NQueens;
 use crate::nqueens::representations::ColumnVec;
-use crate::nqueens::enum_def::HeuristicType;
+use crate::nqueens::enum_def::Heuristic;
 use std::hash::{Hash, Hasher};
 use std::cmp::Ordering;
 use rand::Rng;
@@ -9,15 +9,18 @@ impl NQueens for ColumnVec
 {
     fn conflicts(&self) -> bool
     {
-        for (c1, r1) in self.data.iter().enumerate() //.filter(|&(_, &x)| x >= 0)
+        let queens_count = self.data.len();
+        for i in 0..queens_count
         {
-            for (c2, r2) in self.data.iter().enumerate().skip(c1 + 1) //.filter(|&(_, &x)| x >= 0)
+            let r1 = self.data[i];
+            for j in (i + 1)..queens_count
             {
+                let r2 = self.data[j];
                 if r1 == r2
                 {
                     return true;
                 }
-                if (r1 - r2).abs() == (c1 as i32 - c2 as i32).abs()
+                if (r1 - r2).abs() == (j - i) as i32
                 {
                     return true;
                 }
@@ -34,7 +37,7 @@ impl NQueens for ColumnVec
         self.data = board;
     }
 
-    fn create_empty(n: usize, heuristic_type: Option<HeuristicType>) -> Self
+    fn create_empty(n: usize, heuristic_type: Option<Heuristic>) -> Self
     {
         ColumnVec::init_empty(n, heuristic_type)
     }
@@ -54,7 +57,7 @@ impl NQueens for ColumnVec
             let mut child = self.clone();
             child.data.push(col as i32);
             // if !child.conflicts() {children.push(child.clone());}
-            children.push(child.clone());
+            children.push(child);
         }
         children
     }
@@ -103,9 +106,13 @@ impl PartialOrd for ColumnVec
 
 impl Ord for ColumnVec
 {
-    //Reversed ordering, heuristic_val = 0 > heuristic_val = 2
     fn cmp(&self, other: &Self) -> Ordering
     {
-        other.get_heuristic_val().cmp(&self.get_heuristic_val())
+        match self.heuristic_type
+        {
+            //Reversed ordering
+            Heuristic::Manhattan => other.get_heuristic_val().cmp(&self.get_heuristic_val()),
+            _ => self.get_heuristic_val().cmp(&other.get_heuristic_val())
+        }
     }
 }

@@ -1,9 +1,9 @@
 #[allow(dead_code)]
-#[derive(Clone, Eq, PartialEq, Hash, Debug)]
-pub enum HeuristicType
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+pub enum Heuristic
 {
     AttacksCount,
     AttacksCountAndQueensCount,
-    // Manhattan,
+    Manhattan,
     None,
 }

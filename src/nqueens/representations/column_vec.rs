@@ -1,9 +1,9 @@
-use crate::nqueens::enum_def::HeuristicType;
+use crate::nqueens::enum_def::Heuristic;
 #[derive(Clone, Debug)]
 pub struct ColumnVec
 {
     pub data: Vec<i32>,
-    pub heuristic_type: HeuristicType,
+    pub heuristic_type: Heuristic,
     /// Value of the heuristic function used by Best first search
     heuristic_val: usize,
     /// Size of the chessboard
@@ -13,13 +13,13 @@ pub struct ColumnVec
 #[allow(dead_code)]
 impl ColumnVec
 {
-    pub fn init_empty(n: usize, heuristic_type: Option<HeuristicType>) -> Self
+    pub fn init_empty(n: usize, heuristic_type: Option<Heuristic>) -> Self
     {
         ColumnVec
         {
             data: Vec::new(),
-            heuristic_type: heuristic_type.unwrap_or(HeuristicType::None),
-            heuristic_val: 0,
+            heuristic_type: heuristic_type.unwrap_or(Heuristic::None),
+            heuristic_val: n,
             n,
         }
     }
@@ -36,18 +36,47 @@ impl ColumnVec
     {
         match self.heuristic_type
         {
-            HeuristicType::AttacksCount =>
+            Heuristic::AttacksCount =>
             {
                 self.heuristic_val = self.attacks_count();
             }
-            HeuristicType::AttacksCountAndQueensCount =>
+            Heuristic::AttacksCountAndQueensCount =>
             {
                 let queens_count = self.data.len();
                 self.heuristic_val = self.attacks_count() + (self.n - queens_count);
             }
-            HeuristicType::None =>
+            Heuristic::Manhattan =>
             {
-                self.heuristic_val = 0;
+                self.heuristic_val =
+                {
+                    let mut result = 0;
+                    let queens_count = self.data.len();
+                    for c1 in 0..queens_count
+                    {
+                        let r1 = self.data[c1];
+                        for c2 in (c1 + 1)..queens_count
+                        {
+                            let r2 = self.data[c2];
+                            result +=
+                                {
+                                    let distance = (r2 - r1).abs() as usize - (c2 - c1);
+                                    if distance <= 3
+                                    {
+                                        distance * self.n
+                                    }
+                                    else
+                                    {
+                                        distance
+                                    }
+                                }
+                        }
+                    }
+                    result
+                }
+            }
+            Heuristic::None =>
+            {
+                self.heuristic_val = self.n;
             }
         }
     }
@@ -55,15 +84,18 @@ impl ColumnVec
     fn attacks_count(&self) -> usize
     {
         let mut result = 0;
-        for (c1, r1) in self.data.iter().enumerate() //.filter(|&(_, &x)| x >= 0)
+        let queens_count = self.data.len();
+        for i in 0..queens_count
         {
-            for (c2, r2) in self.data.iter().enumerate().skip(c1 + 1) //.filter(|&(_, &x)| x >= 0)
+            let r1 = self.data[i];
+            for j in (i + 1)..queens_count
             {
+                let r2 = self.data[j];
                 if r1 == r2
                 {
                     result += 1;
                 }
-                if (r1 - r2).abs() == (c1 as i32 - c2 as i32).abs()
+                if (r1 - r2).abs() == (j - i) as i32
                 {
                     result += 1;
                 }

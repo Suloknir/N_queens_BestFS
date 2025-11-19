@@ -1,6 +1,6 @@
 use crate::nqueens::trait_def::NQueens;
 use crate::nqueens::representations::Tuples;
-use crate::nqueens::enum_def::HeuristicType;
+use crate::nqueens::enum_def::Heuristic;
 use std::hash::{Hash, Hasher};
 use std::cmp::Ordering;
 use rand::Rng;
@@ -34,7 +34,7 @@ impl NQueens for Tuples
         self.data = board;
     }
 
-    fn create_empty(n: usize, heuristic_type: Option<HeuristicType>) -> Self
+    fn create_empty(n: usize, heuristic_type: Option<Heuristic>) -> Self
     {
         Tuples::init_empty(n, heuristic_type)
     }
@@ -104,9 +104,13 @@ impl PartialOrd for Tuples
 
 impl Ord for Tuples
 {
-    //Reversed ordering, eg. (heuristic_val = 0) > (heuristic_val = 2)
     fn cmp(&self, other: &Self) -> Ordering
     {
-        other.get_heuristic_val().cmp(&self.get_heuristic_val())
+        match self.heuristic_type
+        {
+            //Reversed ordering
+            Heuristic::Manhattan => other.get_heuristic_val().cmp(&self.get_heuristic_val()),
+            _ => self.get_heuristic_val().cmp(&other.get_heuristic_val())
+        }
     }
 }
