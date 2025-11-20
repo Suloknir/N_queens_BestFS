@@ -102,14 +102,15 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord + std::fmt::Debug
     fn best_fs(n: usize, heuristic_type: Heuristic, debug: bool) -> Option<(Self, usize, usize)>
     {
         let mut closed = HashSet::<Self>::new();
-        let mut open_min_heap = BinaryHeap::<Reverse<Self>>::new();
+        //Reversed to move the best heuristic on the top
+        let mut open = BinaryHeap::<Reverse<Self>>::new();
         let mut open_set = HashSet::<Self>::new();
         let mut state0 = Self::create_empty(n, Some(heuristic_type));
         state0.calc_heuristic();
         // println!("{state0:?}");
         open_set.insert(state0.clone());
-        open_min_heap.push(Reverse(state0));
-        while let Some(Reverse(current)) = open_min_heap.pop()
+        open.push(Reverse(state0));
+        while let Some(Reverse(current)) = open.pop()
         {
             open_set.remove(&current);
             if debug
@@ -119,7 +120,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord + std::fmt::Debug
             let queens_count = current.get_queens_count();
             if queens_count == n && !current.conflicts()
             {
-                return Some((current, open_min_heap.len(), closed.len()));
+                return Some((current, open.len(), closed.len()));
             }
             let children = current.generate_children(n);
             for mut child in children
@@ -131,7 +132,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord + std::fmt::Debug
                 child.calc_heuristic();
                 if !open_set.contains(&child)
                 {
-                    open_min_heap.push(Reverse(child.clone()));
+                    open.push(Reverse(child.clone()));
                     open_set.insert(child);
                 }
                 else
@@ -141,7 +142,7 @@ pub trait NQueens : Sized + Eq + std::hash::Hash + Clone + Ord + std::fmt::Debug
                     {
                         open_set.replace(child.clone());
                         //Todo: figure out how to delete duplicate from binaryheap to save memory
-                        open_min_heap.push(Reverse(child));
+                        open.push(Reverse(child));
                     }
                 }
             }

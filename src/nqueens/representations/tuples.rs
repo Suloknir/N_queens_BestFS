@@ -61,11 +61,11 @@ impl Tuples
                                 let distance = Self::manhattan_distance((r1, c1), (r2, c2));
                                 if distance <= 3
                                 {
-                                    distance * self.n
+                                    distance
                                 }
                                 else
                                 {
-                                    distance
+                                    distance * self.n
                                 }
                             }
                         }
@@ -83,7 +83,7 @@ impl Tuples
     {
         let (r1, c1) = q1;
         let (r2, c2) = q2;
-        (r1 - r2).abs() as usize - (c1 - c2).abs() as usize
+        (r1 - r2).abs() as usize + (c1 - c2).abs() as usize
     }
 
     fn attacks_count(&self) -> usize
