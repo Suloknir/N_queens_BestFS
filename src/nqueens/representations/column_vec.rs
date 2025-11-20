@@ -59,7 +59,7 @@ impl ColumnVec
                             let r2 = self.data[c2];
                             result +=
                                 {
-                                    let distance = (r2 - r1).abs() as usize + (c2 as i32- c1 as i32).abs() as usize;
+                                    let distance = (r2 - r1).abs() as usize + (c2 - c1);
                                     if distance <= 3
                                     {
                                         distance
